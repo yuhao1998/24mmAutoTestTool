@@ -33,6 +33,19 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1
 
 详细说明见 [`scripts/README.md`](./scripts/README.md)。
 
+## 邮箱识别与升级包下载路径（重点）
+
+邮件触发升级时，工具从主题/正文识别包地址，再下载或复制到本机「升级包保存」目录，然后整理并升级。
+
+| 步骤 | 说明 |
+|------|------|
+| 识别 | JSON / 键值 / 裸 URL·UNC·本地路径（`package_url` / `package_path` 等） |
+| 落地 | `email.package_save_dir`（GUI「升级包保存」） |
+| 整理 | `.zip` 直接用；`.7z` 自动解压找 `update.zip` / payload |
+| 升级 | 调用 `SocOtaUpgrade.exe` 完整 SOC 升级 |
+
+专项文档：[`scripts/docs/email_package_path.md`](./scripts/docs/email_package_path.md)
+
 ## HAL 自检脚本池
 
 `scripts/hal_selfcheck/<module_id>/` 为各 HAL 模块 L1/L2 自检脚本，由 GUI「执行检查」或升级成功后的脚本池自动推送到车机执行。
@@ -42,6 +55,7 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1
 ## 配置注意
 
 - `scripts/t2_atf_config.json`：ATF / 邮箱监听等配置。**请勿提交真实密码**；可参考 `t2_atf_config.json.example` 填写本地私有配置。
+- `email.package_save_dir`：邮件升级包本机落地目录，建议填绝对路径（如 `D:\ota\packages`）。
 - `scripts/soc_ota_config.json`：串口、波特率等本机参数，可按工位修改。
 
 ## 许可 / 用途

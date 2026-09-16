@@ -9,6 +9,7 @@
 | `SocOtaUpgrade/` | **可直接分发**的 Windows 工具包（exe + 内置 adb + 配置） |
 | `soc_ota_tool/` | C# 源码与 `build.ps1` 构建脚本 |
 | `hal_selfcheck/` | 各 HAL 模块 L1/L2 自检脚本 |
+| `docs/email_package_path.md` | **邮箱路径识别与下载落地**专项说明 |
 | `t2_upgrade_entry.py` | ATF / 邮箱 / TCP 监听升级入口 |
 | `t2_script_pool.json` | 脚本池注册表（路径指向 `hal_selfcheck/`） |
 | `t2_atf_config.json` | ATF/邮箱等配置（勿填真实密码进仓库） |
@@ -94,34 +95,32 @@ SocOtaUpgrade.exe -package "D:\ota\update.zip"
 | `soc_ota_exe` | `SocOtaUpgrade.exe` 相对路径 |
 | `bmc_config_path` | 只读复用 BMC `config.json` 的 oss/atf/pc 配置 |
 | `tcp.port` | 监听端口（默认 8007，避免与 BMC `build_notification` 的 8006 冲突）|
-| `email.enabled` | 是否启用 IMAP 邮箱监听（默认 false）|
+| `email.enabled` | 是否启用邮箱监听（默认 false）|
+| `email.protocol` | `ews`（推荐）/ `imap` / `pop3` / `auto` |
 | `email.imap_host/port/username/password` | 邮箱服务器与账号 |
-| `email.subject_keyword` | 主题过滤关键字（默认 `T2_OTA`）|
-| `email.package_save_dir` | 邮件取到的升级包本地保存目录（GUI「升级包保存」）|
+| `email.subject_keyword` | 过滤关键字（默认 `T2_OTA`，主题**或**正文命中即可）|
+| `email.package_save_dir` | **升级包落地目录**（GUI「升级包保存」；邮件下载/复制的目标根路径）|
 | `atf_upload.enabled` | ATF 上传开关 |
 
-### 邮箱触发（IMAP）
+### 邮箱识别与下载路径（重点）
 
-在 `t2_atf_config.json` 填好邮箱后设 `email.enabled=true`，监听模式会并行轮询未读邮件。
+> 完整说明见 **[docs/email_package_path.md](./docs/email_package_path.md)**。
 
-GUI（SocOtaUpgrade）可配置并同步：收件箱 / 发件人 / **升级包保存路径**。
+在 `t2_atf_config.json` 填好邮箱后设 `email.enabled=true`。GUI 可配置并同步：收件箱 / 发件人 / **升级包保存路径**（`package_save_dir`）。
 
-邮件主题建议包含 `T2_OTA`，正文给出升级包地址（本地 / UNC / HTTP）：
+**流水线**：轮询邮件 → 关键字匹配 → **识别路径** → **下载/复制到 `package_save_dir`** → `.7z` 自动解压找 OTA → 调 `SocOtaUpgrade` 升级。
 
-```text
-{"package_url":"http://192.168.1.10/ota/update.zip"}
-```
+路径识别（主题+正文）：
 
-```text
-{"package_path":"\\\\192.168.1.10\\share\\full_update.zip"}
-```
+| 写法 | 示例 |
+|------|------|
+| JSON | `{"package_url":"\\\\192.168.1.10\\share\\ota.7z"}` |
+| 键值 | `package_path=D:\ota\update.zip` |
+| 裸地址 | `http://192.168.1.10/ota/update.zip` |
 
-```text
-package_path=E:\BMCSJB\update.zip
-```
-
-流程：**解析地址 → 下载/复制到「升级包保存」目录 → 用本地路径执行升级**。  
-已处理 UID 记在 `t2_email_processed_uids.json`，避免重复触发。
+支持源：本机路径 / UNC / HTTP(S)；无包地址仅有 `soc_version`+`parent_dir` 时走 OSS。  
+落地目录优先级：`email.package_save_dir` → `download_dir` → `./t2_downloads`。  
+已处理 UID 记在 `t2_email_processed_uids.json`。
 
 ### build_pigeon 联动
 
