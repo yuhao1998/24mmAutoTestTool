@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "module_id": "vehicleconfig",
+  "module_name": "车参 HAL",
+  "hal_binary": "/vendor/bin/hw/vendor.iauto.hardware.vehicleconfig@1.0-service",
+  "init_service": "vehicleconfig",
+  "owner": "vehicleconfig-team",
+  "script_name": "HalSelfCheck_vehicleconfig.sh",
+  "script_desc": "车参模块自检（L1 冒烟 + L2 写读还原四步法）",
+  "platform": {
+    "sync_to_atf": true,
+    "default_selected": false,
+    "tags": ["hal", "vehicleconfig", "l1", "l2", "write"]
+  },
+  "timeout_sec": 300,
+  "required": true,
+  "hardware_autotest": "vehicleconfig/autotest",
+  "cases": [
+    { "id": "ipc", "name": "服务可连接", "level": "L1", "enabled": true, "required": true },
+    { "id": "binder", "name": "服务绑定正常", "level": "L1", "enabled": true, "required": true },
+    { "id": "response", "name": "接口有响应", "level": "L1", "enabled": true, "required": true },
+    { "id": "no_crash", "name": "调用后无崩溃", "level": "L1", "enabled": true, "required": true },
+    { "id": "function_smoke", "name": "功能冒烟(槽位可读)", "level": "L1", "enabled": true, "required": true },
+    { "id": "memleak_probe", "name": "无内存泄漏（探针）", "level": "L1", "enabled": false, "required": false },
+    { "id": "write_read_restore", "name": "合规写入+切面+全量查询+还原", "level": "L2", "enabled": true, "required": true, "owner": "vehicleconfig-team" },
+    { "id": "write_invalid_expected_fail", "name": "空文件/不合规文件写入_预期失败", "level": "L2", "enabled": false, "required": true, "owner": "vehicleconfig-team" },
+    { "id": "read_invalid_configid", "name": "不合规车参名读取_预期失败", "level": "L2", "enabled": false, "required": true, "owner": "vehicleconfig-team" },
+    { "id": "persist_after_reboot", "name": "重启后持久化校验", "level": "L2", "enabled": false, "required": false, "owner": "vehicleconfig-team" },
+    { "id": "concurrent_query", "name": "多进程并发查询压测", "level": "L2", "enabled": false, "required": false, "owner": "vehicleconfig-team" }
+  ]
+}

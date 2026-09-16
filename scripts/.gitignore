@@ -1,0 +1,14 @@
+# runtime
+__pycache__/
+*.log
+logs/
+t2_downloads/
+t2_email_processed_uids.json
+
+# local secrets — use *.example as template
+# (committed configs must not contain real passwords)
+
+# build caches under soc_ota_tool
+soc_ota_tool/.go-sdk/
+soc_ota_tool/bundled/platform-tools.zip
+SocOtaUpgrade/logs/

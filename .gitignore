@@ -1,0 +1,25 @@
+# OS / IDE
+Thumbs.db
+Desktop.ini
+.DS_Store
+.idea/
+.vscode/
+*.user
+*.suo
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local runtime / secrets
+**/logs/
+**/*.log
+**/t2_downloads/
+**/t2_email_processed_uids.json
+dist/
+
+# Large / regenerable build deps
+scripts/soc_ota_tool/.go-sdk/
+scripts/soc_ota_tool/bundled/platform-tools.zip

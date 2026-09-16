@@ -1,0 +1,151 @@
+﻿{
+  "_comment": "T2 脚本池。module_id 必须等于目录名（installerhal/vehicleconfig），勿写成 run。",
+  "enabled": true,
+  "fail_fast": false,
+  "default_timeout_sec": 120,
+  "device_script_dir": "/data/local/tmp/t2_script_pool",
+  "device_hal_selfcheck_dir": "/data/local/tmp/t2_selfcheck",
+  "build_detect_report": true,
+  "scripts": [
+    {
+      "kind": "hal_module",
+      "id": "run",
+      "module_id": "run",
+      "name": "run 自检",
+      "path": "./hal_selfcheck/installerhal/run.sh",
+      "package": "vendor.iauto.hardware.installerhal@1.0-service",
+      "timeout_sec": 120,
+      "enabled": true,
+      "tags": [
+        "hal",
+        "run"
+      ]
+    },
+    {
+      "kind": "hal_module",
+      "id": "vehicleconfig",
+      "module_id": "vehicleconfig",
+      "name": "vehicleconfig 自检",
+      "path": "./hal_selfcheck/vehicleconfig/run.sh",
+      "package": "vendor.iauto.hardware.vehicleconfig@1.0-service",
+      "timeout_sec": 300,
+      "enabled": true,
+      "tags": [
+        "hal",
+        "vehicleconfig"
+      ]
+    },
+    {
+      "kind": "hal_module",
+      "id": "diag",
+      "module_id": "diag",
+      "name": "diag 自检",
+      "path": "./hal_selfcheck/diag/run.sh",
+      "package": "vendor.iauto.hardware.diag@1.0-service",
+      "timeout_sec": 120,
+      "enabled": true,
+      "tags": [
+        "hal",
+        "diag"
+      ]
+    },
+    {
+      "kind": "hal_module",
+      "id": "run",
+      "module_id": "run",
+      "name": "run 自检",
+      "path": "./hal_selfcheck/drinfo/run.sh",
+      "package": "vendor.iauto.hardware.drinfo@1.0-service",
+      "timeout_sec": 120,
+      "enabled": true,
+      "tags": [
+        "hal",
+        "run"
+      ]
+    },
+    {
+      "kind": "hal_module",
+      "id": "run",
+      "module_id": "run",
+      "name": "run 自检",
+      "path": "./hal_selfcheck/devmanager/run.sh",
+      "package": "vendor.iauto.hardware.devmanager@1.1-service",
+      "timeout_sec": 120,
+      "enabled": true,
+      "tags": [
+        "hal",
+        "run"
+      ]
+    },
+    {
+      "kind": "hal_module",
+      "id": "input",
+      "module_id": "input",
+      "name": "input 自检",
+      "path": "./hal_selfcheck/input/run.sh",
+      "package": "vendor.iauto.hardware.input@1.0-service",
+      "timeout_sec": 120,
+      "enabled": true,
+      "tags": [
+        "hal",
+        "input"
+      ]
+    },
+    {
+      "kind": "hal_module",
+      "id": "light",
+      "module_id": "light",
+      "name": "light 自检",
+      "path": "./hal_selfcheck/light/run.sh",
+      "package": "vendor.iauto.hardware.light@1.0-service",
+      "timeout_sec": 120,
+      "enabled": true,
+      "tags": [
+        "hal",
+        "light"
+      ]
+    },
+    {
+      "kind": "hal_module",
+      "id": "audioctrl",
+      "module_id": "audioctrl",
+      "name": "audioctrl 自检",
+      "path": "./hal_selfcheck/audioctrl/run.sh",
+      "package": "vendor.iauto.hardware.audioctrl@1.1-service",
+      "timeout_sec": 120,
+      "enabled": true,
+      "tags": [
+        "hal",
+        "audioctrl"
+      ]
+    },
+    {
+      "kind": "hal_module",
+      "id": "run",
+      "module_id": "run",
+      "name": "run 自检",
+      "path": "./hal_selfcheck/cameractrl/run.sh",
+      "package": "vendor.iauto.hardware.cameractrl@1.0-service",
+      "timeout_sec": 120,
+      "enabled": true,
+      "tags": [
+        "hal",
+        "run"
+      ]
+    },
+    {
+      "kind": "hal_module",
+      "id": "run",
+      "module_id": "run",
+      "name": "run 自检",
+      "path": "./hal_selfcheck/gnssdr/run.sh",
+      "package": "vendor.iauto.hardware.gnssdr@1.0-service",
+      "timeout_sec": 120,
+      "enabled": true,
+      "tags": [
+        "hal",
+        "run"
+      ]
+    }
+  ]
+}

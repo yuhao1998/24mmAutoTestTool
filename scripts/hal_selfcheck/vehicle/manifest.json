@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "module_id": "vehicle",
+  "module_name": "系统 VHAL（本树无实现）",
+  "hal_binary": "",
+  "init_service": "",
+  "owner": "vehicle-team",
+  "script_name": "HalSelfCheck_vehicle.sh",
+  "script_desc": "vehicle 模块自检（L1：本机接口/服务登记，无外设）；本仓库 vehicle/ 仅 sepolicy；L1 仅探测外树服务是否登记",
+  "platform": {
+    "sync_to_atf": true,
+    "default_selected": false,
+    "tags": [
+      "hal",
+      "vehicle",
+      "l1"
+    ]
+  },
+  "timeout_sec": 120,
+  "required": false,
+  "l1": {
+    "ipc": true,
+    "response": true,
+    "binder": true,
+    "function_smoke": true,
+    "no_crash": true,
+    "memleak_probe": false,
+    "lshal_needle": "android.hardware.automotive.vehicle@2.0::IVehicle/default",
+    "mode": "placeholder"
+  },
+  "cases": [
+    {
+      "id": "ipc",
+      "name": "服务可连接",
+      "level": "L1",
+      "enabled": true,
+      "required": false
+    },
+    {
+      "id": "response",
+      "name": "接口有响应",
+      "level": "L1",
+      "enabled": true,
+      "required": false
+    },
+    {
+      "id": "binder",
+      "name": "服务绑定正常",
+      "level": "L1",
+      "enabled": true,
+      "required": false
+    },
+    {
+      "id": "function_smoke",
+      "name": "功能冒烟",
+      "level": "L1",
+      "enabled": true,
+      "required": false
+    },
+    {
+      "id": "no_crash",
+      "name": "调用后无崩溃",
+      "level": "L1",
+      "enabled": true,
+      "required": false
+    },
+    {
+      "id": "memleak_probe",
+      "name": "无内存泄漏（探针）",
+      "level": "L1",
+      "enabled": false,
+      "required": false
+    }
+  ],
+  "soft_if_unavailable": true,
+  "env_deps": [],
+  "soft_skip_policy": "missing_dep_or_unavailable => L1 skip, overall pass; no CANoe required"
+}

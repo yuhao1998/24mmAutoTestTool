@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0",
+  "module_id": "cameractrl",
+  "module_name": "相机控制 HAL",
+  "hal_binary": "/vendor/bin/hw/vendor.iauto.hardware.cameractrl@1.0-service",
+  "init_service": "CameraCtrlHal",
+  "owner": "cameractrl-team",
+  "script_name": "HalSelfCheck_cameractrl.sh",
+  "script_desc": "cameractrl 模块自检（L1：本机接口/服务登记，无外设）",
+  "platform": {
+    "sync_to_atf": true,
+    "default_selected": false,
+    "tags": [
+      "hal",
+      "cameractrl",
+      "l1"
+    ]
+  },
+  "timeout_sec": 120,
+  "required": false,
+  "l1": {
+    "ipc": true,
+    "response": true,
+    "binder": true,
+    "function_smoke": true,
+    "no_crash": true,
+    "memleak_probe": false,
+    "lshal_needle": "vendor.iauto.hardware.cameractrl@1.0::ICameraCtrl/default",
+    "mode": "hidl"
+  },
+  "cases": [
+    {
+      "id": "ipc",
+      "name": "服务可连接",
+      "level": "L1",
+      "enabled": true,
+      "required": true
+    },
+    {
+      "id": "response",
+      "name": "接口有响应",
+      "level": "L1",
+      "enabled": true,
+      "required": true
+    },
+    {
+      "id": "binder",
+      "name": "服务绑定正常",
+      "level": "L1",
+      "enabled": true,
+      "required": true
+    },
+    {
+      "id": "function_smoke",
+      "name": "功能冒烟",
+      "level": "L1",
+      "enabled": true,
+      "required": true
+    },
+    {
+      "id": "no_crash",
+      "name": "调用后无崩溃",
+      "level": "L1",
+      "enabled": true,
+      "required": true
+    },
+    {
+      "id": "memleak_probe",
+      "name": "无内存泄漏（探针）",
+      "level": "L1",
+      "enabled": false,
+      "required": false
+    }
+  ],
+  "soft_if_unavailable": true,
+  "env_deps": [
+    "camera"
+  ],
+  "soft_skip_policy": "missing_dep_or_unavailable => L1 skip, overall pass; no CANoe required"
+}

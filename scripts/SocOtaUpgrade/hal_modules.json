@@ -1,0 +1,126 @@
+{
+  "Version": "1.0",
+  "Description": "hardware/ 仓库 HAL 模块基本状态检查（L0：进程/init 存活，不含接口/功能测试）",
+  "Modules": [
+    {
+      "Id": "installerhal",
+      "Name": "installerhal",
+      "Binary": "/vendor/bin/hw/vendor.iauto.hardware.installerhal@1.0-service",
+      "ProcessPattern": "installerhal@1.0-service",
+      "InitService": "vendor.iauto_installerhal",
+      "Required": true
+    },
+    {
+      "Id": "vehicleconfig",
+      "Name": "vehicleconfig",
+      "Binary": "/vendor/bin/hw/vendor.iauto.hardware.vehicleconfig@1.0-service",
+      "ProcessPattern": "vehicleconfig@1.0-service",
+      "InitService": "vehicleconfig",
+      "Required": true
+    },
+    {
+      "Id": "diag",
+      "Name": "diag",
+      "Binary": "/vendor/bin/hw/vendor.iauto.hardware.diag@1.0-service",
+      "ProcessPattern": "diag@1.0-service",
+      "InitService": "Diag",
+      "Required": true
+    },
+    {
+      "Id": "drinfo",
+      "Name": "drinfo",
+      "Binary": "/vendor/bin/hw/vendor.iauto.hardware.drinfo@1.0-service",
+      "ProcessPattern": "drinfo@1.0-service",
+      "InitService": "DRInfo",
+      "Required": true
+    },
+    {
+      "Id": "devmanager",
+      "Name": "devmanager",
+      "Binary": "/vendor/bin/hw/vendor.iauto.hardware.devmanager@1.1-service",
+      "ProcessPattern": "devmanager@1.1-service",
+      "InitService": "devmanager",
+      "Required": true
+    },
+    {
+      "Id": "input",
+      "Name": "input",
+      "Binary": "/vendor/bin/hw/vendor.iauto.hardware.input@1.0-service",
+      "ProcessPattern": "input@1.0-service",
+      "InitService": "Input",
+      "Required": true
+    },
+    {
+      "Id": "light",
+      "Name": "light",
+      "Binary": "/vendor/bin/hw/vendor.iauto.hardware.light@1.0-service",
+      "ProcessPattern": "light@1.0-service",
+      "InitService": "LightlHal",
+      "Required": true
+    },
+    {
+      "Id": "audioctrl",
+      "Name": "audioctrl",
+      "Binary": "/vendor/bin/hw/vendor.iauto.hardware.audioctrl@1.1-service",
+      "ProcessPattern": "audioctrl@1.1-service",
+      "InitService": "hardware.audioctrl-hal-1.1",
+      "Required": true
+    },
+    {
+      "Id": "securitychip",
+      "Name": "securityta100 / securitychip",
+      "Binary": "/vendor/bin/hw/vendor.iauto.hardware.securitychip@1.0-service",
+      "ProcessPattern": "securitychip@1.0-service",
+      "InitService": "vendor.iauto_securitychip",
+      "Required": false
+    },
+    {
+      "Id": "localradio",
+      "Name": "radio",
+      "Binary": "/vendor/bin/hw/vendor.iauto.hardware.localradio@1.0-service",
+      "ProcessPattern": "localradio@1.0-service",
+      "InitService": "LocalRadio",
+      "Required": false
+    },
+    {
+      "Id": "cameractrl",
+      "Name": "cameractrl",
+      "Binary": "/vendor/bin/hw/vendor.iauto.hardware.cameractrl@1.0-service",
+      "ProcessPattern": "cameractrl@1.0-service",
+      "InitService": "CameraCtrlHal",
+      "Required": false
+    },
+    {
+      "Id": "gnssdr",
+      "Name": "Gnssdr",
+      "Binary": "/vendor/bin/hw/vendor.iauto.hardware.gnssdr@1.0-service",
+      "ProcessPattern": "gnssdr@1.0-service",
+      "InitService": "Gnssdr",
+      "Required": false
+    },
+    {
+      "Id": "most",
+      "Name": "most",
+      "Binary": "/vendor/bin/hw/vendor.hsae.hardware.most@1.0-service",
+      "ProcessPattern": "most@1.0-service",
+      "InitService": "vendor.hsae_most_hal",
+      "Required": false
+    },
+    {
+      "Id": "earlycarservice",
+      "Name": "EarlyCarService",
+      "Binary": "/vendor/bin/hw/vendor.hsae.hardware.earlycarservice.serial@1.0-service",
+      "ProcessPattern": "earlycarservice.serial@1.0-service",
+      "InitService": "earlycarservice_serial_hal_service",
+      "Required": false
+    },
+    {
+      "Id": "isomeipd",
+      "Name": "someip (RSE 依赖)",
+      "Binary": "/vendor/bin/isomeipd_ics",
+      "ProcessPattern": "isomeipd_ics",
+      "InitService": "isomeipd_ics",
+      "Required": false
+    }
+  ]
+}

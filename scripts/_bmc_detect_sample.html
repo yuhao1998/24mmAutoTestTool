@@ -1,0 +1,337 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>BMC OTA 冒烟测试报告</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --text: #1a1a2e;
+      --muted: #5c6370;
+      --border: #e2e6ed;
+      --primary: #1565c0;
+      --pass: #2e7d32;
+      --pass-bg: #e8f5e9;
+      --fail: #c62828;
+      --fail-bg: #ffebee;
+      --warn: #ef6c00;
+      --warn-bg: #fff3e0;
+      --skip: #757575;
+      --skip-bg: #f5f5f5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 32px 24px 48px;
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .header {
+      background: linear-gradient(135deg, #0d47a1 0%, #1565c0 55%, #1976d2 100%);
+      color: #fff;
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(21, 101, 192, 0.25);
+    }
+    .header h1 { margin: 0 0 8px; font-size: 26px; font-weight: 600; }
+    .header .subtitle { opacity: 0.9; font-size: 14px; }
+    .verdict-banner {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 20px 28px;
+      margin-bottom: 24px;
+      border-left: 6px solid var(--primary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .verdict-banner.overall-pass { border-left-color: var(--pass); }
+    .verdict-banner.overall-fail { border-left-color: var(--fail); }
+    .verdict-banner.overall-warn { border-left-color: var(--warn); }
+    .verdict-label { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .verdict-value { font-size: 28px; font-weight: 700; }
+    .verdict-banner.overall-pass .verdict-value { color: var(--pass); }
+    .verdict-banner.overall-fail .verdict-value { color: var(--fail); }
+    .verdict-banner.overall-warn .verdict-value { color: var(--warn); }
+    .verdict-desc { color: var(--muted); font-size: 14px; margin-top: 4px; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 768px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+    .stat-card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .stat-card .num { font-size: 28px; font-weight: 700; }
+    .stat-card .lbl { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .stat-card.pass .num { color: var(--pass); }
+    .stat-card.fail .num { color: var(--fail); }
+    .stat-card.warn .num { color: var(--warn); }
+    .section {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .section h2 {
+      margin: 0 0 16px;
+      font-size: 17px;
+      color: var(--primary);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 10px;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px 32px;
+      font-size: 14px;
+    }
+    @media (max-width: 600px) {
+      .meta-grid { grid-template-columns: 1fr; }
+    }
+    .meta-item label { display: block; color: var(--muted); font-size: 12px; margin-bottom: 2px; }
+    .meta-item span { font-weight: 500; word-break: break-all; }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    table.data-table th {
+      background: #f0f4f8;
+      color: var(--text);
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+    }
+    table.data-table td {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+    table.data-table tbody tr:nth-child(even) { background: #fafbfc; }
+    .col-id { width: 52px; text-align: center; font-weight: 600; color: var(--muted); }
+    .col-name { font-weight: 500; min-width: 120px; }
+    .col-expect { color: var(--muted); min-width: 160px; }
+    .col-actual { font-family: Consolas, monospace; font-size: 12px; }
+    .col-remark { color: var(--muted); font-size: 12px; max-width: 200px; }
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge-pass { background: var(--pass-bg); color: var(--pass); }
+    .badge-fail { background: var(--fail-bg); color: var(--fail); }
+    .badge-warn { background: var(--warn-bg); color: var(--warn); }
+    .badge-skip { background: var(--skip-bg); color: var(--skip); }
+    .section-summary {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .section-summary code {
+      background: #eef2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .protocol-grid {
+      display: grid;
+      gap: 16px;
+    }
+    .protocol-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fafbfc;
+    }
+    .protocol-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 18px;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+    }
+    .protocol-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .protocol-meta {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .protocol-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .btn-link {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 6px;
+      background: var(--primary);
+      color: #fff !important;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .btn-link:hover {
+      background: #0d47a1;
+    }
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 32px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>BMC OTA 冒烟测试报告</h1>
+      <p class="subtitle">Smoke Test Report · 发版后自动化点检</p>
+    </header>
+
+    <div class="verdict-banner overall-fail">
+      <div>
+        <div class="verdict-label">总体结论</div>
+        <div class="verdict-value">不通过</div>
+        <div class="verdict-desc">存在失败项，需排查后复测</div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card"><div class="num">9</div><div class="lbl">测试项</div></div>
+      <div class="stat-card pass"><div class="num">5</div><div class="lbl">通过</div></div>
+      <div class="stat-card fail"><div class="num">2</div><div class="lbl">失败</div></div>
+      <div class="stat-card warn"><div class="num">2</div><div class="lbl">待复核</div></div>
+      <div class="stat-card"><div class="num">0</div><div class="lbl">未执行</div></div>
+    </div>
+
+    <section class="section">
+      <h2>1. 测试概要</h2>
+      <div class="meta-grid">
+        <div class="meta-item"><label>报告生成时间</label><span>2026-07-28 01:26:41</span></div>
+        <div class="meta-item"><label>测试类型</label><span>OTA 升级后冒烟测试</span></div>
+        <div class="meta-item"><label>测试 PC</label><span>DESKTOP-G2J121L</span></div>
+        <div class="meta-item"><label>PC ID</label><span>031B021C-040D-05C6-3606-B90700080009</span></div>
+        <div class="meta-item"><label>OTA 版本路径</label><span>yangzhou/yzscm/BMC_PAC_Release/SIP_R3.4.0/userdebug/</span></div>
+        <div class="meta-item"><label>构建目录</label><span>2026-07-28-01-11-23-CI-432</span></div>
+        <div class="meta-item"><label>SOC 版本</label><span>2026_07_28</span></div>
+        <div class="meta-item"><label>MCU 版本</label><span>PK1B.0.06.00.0.3.20260716152645</span></div>
+        <div class="meta-item"><label>SWITCH 版本</label><span>V42</span></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>2. 测试结果明细</h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>编号</th>
+            <th>分类</th>
+            <th>测试项</th>
+            <th>预期结果</th>
+            <th>实际结果</th>
+            <th>结论</th>
+            <th>备注</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+  <td class="col-id">T01</td>
+  <td>固件版本</td>
+  <td class="col-name">SOC / MCU 版本读取</td>
+  <td class="col-expect">hsbmcctl version 可解析 SOC、MCU 版本号</td>
+  <td class="col-actual">SOC: 2026_07_28 | MCU: PK1B.0.06.00.0.3.20260716152645</td>
+  <td><span class="badge badge-pass">通过</span></td>
+  <td class="col-remark">—</td>
+</tr><tr>
+  <td class="col-id">T02</td>
+  <td>以太网抓包</td>
+  <td class="col-name">WLAN 流量采集</td>
+  <td class="col-expect">设备生成 /tmp/wlan.pcap 并成功 pull 至本地</td>
+  <td class="col-actual">detect/wlan.pcap</td>
+  <td><span class="badge badge-pass">通过</span></td>
+  <td class="col-remark">—</td>
+</tr><tr>
+  <td class="col-id">T03</td>
+  <td>SOME/IP 协议</td>
+  <td class="col-name">IMU 数据校验</td>
+  <td class="col-expect">0xC119/0x8001 报文解析通过，Overall 为 PASS</td>
+  <td class="col-actual">解析: True | REVIEW</td>
+  <td><span class="badge badge-warn">待复核</span></td>
+  <td class="col-remark">详见第 3 节；Overall: REVIEW</td>
+</tr><tr>
+  <td class="col-id">T04</td>
+  <td>SOME/IP 协议</td>
+  <td class="col-name">GNSS 数据校验</td>
+  <td class="col-expect">0xC118/0x8001 报文解析通过，Overall 为 PASS</td>
+  <td class="col-actual">解析: True | REVIEW</td>
+  <td><span class="badge badge-warn">待复核</span></td>
+  <td class="col-remark">详见第 3 节；Overall: REVIEW</td>
+</tr><tr>
+  <td class="col-id">T05</td>
+  <td>摄像头</td>
+  <td class="col-name">摄像头输出采集</td>
+  <td class="col-expect">camera[0,3] camera[5,12] stream状态全部为on</td>
+  <td class="col-actual">cam 0 stream on<br>cam 1 stream on<br>cam 10 stream on<br>cam 11 stream on<br>cam 12 stream on<br>cam 2 stream on<br>cam 3 stream on<br>cam 5 stream on<br>cam 6 stream on<br>cam 7 stream on<br>cam 8 stream on<br>cam 9 stream on</td>
+  <td><span class="badge badge-pass">通过</span></td>
+  <td class="col-remark">日志已采集（camera_self_check_log.txt）</td>
+</tr><tr>
+  <td class="col-id">T06</td>
+  <td>网络连通</td>
+  <td class="col-name">其他模块网络可达</td>
+  <td class="col-expect">CheckOtherModulesNetReachableFromSoc.sh 输出 Pass</td>
+  <td class="col-actual">Fail</td>
+  <td><span class="badge badge-fail">失败</span></td>
+  <td class="col-remark">详见第 4 节；不可达: 172.31.6.206, 172.31.11.4, 172.31.18.1, 172.31.26.3, 172.31.11.10, 172.31.6.12, 172.31.27.13, 172.31.18.13, 172.31.14.13, 172.31.11.13</td>
+</tr><tr>
+  <td class="col-id">T07</td>
+  <td>网络配置</td>
+  <td class="col-name">SOC 网络配置</td>
+  <td class="col-expect">CheckSocNetConfig.sh 输出 Pass</td>
+  <td class="col-actual">Pass</td>
+  <td><span class="badge badge-pass">通过</span></td>
+  <td class="col-remark">详见第 5 节</td>
+</tr><tr>
+  <td class="col-id">T08</td>
+  <td>服务状态</td>
+  <td class="col-name">SOC 服务启动</td>
+  <td class="col-expect">CheckSocServicesAllStarted.sh 输出 Pass</td>
+  <td class="col-actual">Pass</td>
+  <td><span class="badge badge-pass">通过</span></td>
+  <td class="col-remark">—</td>
+</tr><tr>
+  <td class="col-id">T09</td>
+  <td>摄像头模型参数</td>
+  <td class="col-name">摄像头模型</td>
+  <td class="col-expect">dms(cam_3) mode: 3; left_front(cam_5) mode: 3; right_front(cam_7) mode: 3; 其余摄像头mode为1</td>
+  <td class="col-actual">✅front_wide(cam_0) mode: 1<br>✅front_far(cam_1) mode: 1<br>✅rear_mid(cam_2) mode: 1<br>✅dms(cam_3) mode: 3<br>✅left_front(cam_5) mode: 3<br>✅left_rear(cam_6) mode: 1<br>✅right_front(cam_7) mode: 3<br>✅right_rear(cam_8) mode: 1<br>✅front_fisheye(cam_9) mode: 1<br>❌rear_fisheye(cam_10) Failed!<br>✅left_fisheye(cam_11) mode: 1<br>✅right_fisheye(cam_12) mode: 1</td>
+  <td><span class="badge badge-fail">失败</span></td>
+  <td class="col-remark">摄像头检测失败,部分摄像头

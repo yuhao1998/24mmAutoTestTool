@@ -1,0 +1,17 @@
+{
+  "SerialPort": "COM4",
+  "BaudRate": 115200,
+  "UsbModeCmd": "echo peripheral > /sys/bus/platform/devices/a600000.ssusb/mode",
+  "RemoteOtaDir": "/data/ota",
+  "BootTimeoutSec": 600,
+  "UpdateTimeoutSec": 3600,
+  "LogDir": "",
+  "SkipVersionVerify": false,
+  "ExpectedBuildIncremental": "",
+  "ExpectedBuildFingerprint": "",
+  "ExpectedPackageSha256": "",
+  "SkipHalStatusCheck": false,
+  "HalModulesManifest": "",
+  "HalStatusTombstoneMinutes": 60,
+  "ExpectedBootSlotSuffix": ""
+}

@@ -1,0 +1,53 @@
+﻿{
+    "_comment":  "T2 ATF 升级入口配置。oss/atf/pc 字段优先从 bmc_config_path 指向的 BMC config.json 读取（只读复用，避免密钥重复），此处仅放 T2 专属字段。",
+    "soc_ota_exe":  "SocOtaUpgrade/SocOtaUpgrade.exe",
+    "soc_ota_extra_args":  [
+
+                           ],
+    "soc_ota_workdir":  "",
+    "bmc_config_path":  "../BMC_ATF_auto-exec-controller/config.json",
+    "tcp":  {
+                "host":  "0.0.0.0",
+                "port":  8007,
+                "_port_note":  "默认 8007 避免与 BMC build_notification 的 8006 冲突；build_pigeon 的 --port 指向这里即可。"
+            },
+    "email":  {
+                  "enabled":  false,
+                  "protocol":  "ews",
+                  "ews_url":  "https://webmail.hangsheng.com.cn/EWS/Exchange.asmx",
+                  "imap_host":  "webmail.hangsheng.com.cn",
+                  "imap_port":  993,
+                  "pop3_port":  995,
+                  "use_ssl":  true,
+                  "username":  "",
+                  "password":  "",
+                  "mailbox":  "INBOX",
+                  "poll_interval_sec":  30,
+                  "ews_scan_recent":  20,
+                  "pop3_scan_recent":  40,
+                  "subject_keyword":  "T2_OTA",
+                  "from_keyword":  "",
+                  "package_save_dir":  "D:\\\\ota\\\\packages",
+                  "mark_seen":  true,
+                  "mark_processed_policy":  "after_attempt",
+                  "processed_uid_file":  "./t2_email_processed_uids.json",
+                  "_owa_note":  "推荐 protocol=ews（与 OWA/Outlook 同源）。提示词 subject_keyword 匹配主题或正文；升级包支持 .zip/.7z UNC。账号填短名。",
+                  "_note":  "邮件触发：复制/下载到 package_save_dir → 若为 .7z 则自动解压找 update.zip → 调用 SocOtaUpgrade 完整 SOC 升级。测试完成后默认不保留升级包（keep_downloaded_package=false）。"
+              },
+    "upgrade_file_name":  "ota.zip",
+    "download_dir":  "./t2_downloads",
+    "keep_downloaded_package":  false,
+    "atf_upload":  {
+                       "enabled":  true,
+                       "_note":  "仅监听触发（build_pigeon/email/test_trigger_local）时才上报；手动 --package 不上报。"
+                   },
+    "script_pool":  {
+                        "enabled":  true,
+                        "config_path":  "./t2_script_pool.json",
+                        "run_when":  "on_upgrade_success",
+                        "fail_task_on_script_fail":  false,
+                        "build_detect_report":  true,
+                        "_note":  "GUI「自检脚本」列同步到 t2_script_pool.json（不是本段 scripts 列表）。点「执行检查」或升级成功后：建设本机路径 → push 到 /data/local/tmp/t2_selfcheck/\u003cid\u003e/ → 跑 run.sh → 拉 module_result.json → detect_result.html。fail_task_on_script_fail 仅影响升级流水线是否因脚本失败判任务失败；GUI 手动检查失败必提示。"
+                    },
+    "email_mark_note":  "email.mark_processed_policy: after_attempt(默认)|after_success"
+}
